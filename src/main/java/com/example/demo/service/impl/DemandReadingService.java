@@ -15,10 +15,7 @@ import java.util.List;
 
 public class DemandReadingServiceImpl implements DemandReadingService {
 
-    private final DemandReadingRepository repo
-    
-    
-    sitory;
+    private final DemandReadingRepository repository;
 
     public DemandReadingServiceImpl(DemandReadingRepository repository) {
         this.repository = repository;
