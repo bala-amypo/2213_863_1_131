@@ -12,28 +12,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service 
+
 public class DemandReadingServiceImpl implements DemandReadingService {
 
-    private final DemandReadingRepository demandReadingRepository;
-    private final ZoneService zoneService;
+    private final DemandReadingRepository repository;
 
-    @Override
-    public DemandReading create(DemandReading demandReading) {
-        if (demandReading.getDemandValue() < 0) {
-            throw new BadRequestException(">= 0");
-        }
-        if (demandReading.getRecordedAt().isAfter(LocalDateTime.now())) {
-            throw new BadRequestException("future");
-        }
-        // Ensure zone exists
-        Zone zone = zoneService.getById(demandReading.getZone().getId());
-        demandReading.setZone(zone);
-        return demandReadingRepository.save(demandReading);
+    public DemandReadingServiceImpl(DemandReadingRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public List<DemandReading> getByZoneId(Long zoneId) {
-        zoneService.getById(zoneId); // check exists
-        return demandReadingRepository.findByZoneIdOrderByRecordedAtDesc(zoneId);
+    public List<DemandReading> getReadingsForZone(Long zoneId) {
+        return repository.findByZoneId(zoneId);
+    }
+
+    @Override
+    public DemandReading getLatestReading(Long zoneId) {
+        return repository.findTopByZoneIdOrderByRecordedAtDesc(zoneId);
     }
 }
+
