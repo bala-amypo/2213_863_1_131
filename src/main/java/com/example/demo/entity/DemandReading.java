@@ -21,4 +21,37 @@ public class DemandReading {
 
     private Double demandMW;
     private Timestamp recordedAt;
+
+    public Long getId() {
+    return id;
+}
+
+public void setId(Long id) {
+    this.id = id;
+}
+
+public Zone getZone() {
+    return zone;
+}
+
+public void setZone(Zone zone) {
+    this.zone = zone;
+}
+
+public Double getDemandMW() {
+    return demandMW;
+}
+
+public void setDemandMW(Double demandMW) {
+    this.demandMW = demandMW;
+}
+
+public Timestamp getRecordedAt() {
+    return recordedAt;
+}
+
+public void setRecordedAt(Timestamp recordedAt) {
+    this.recordedAt = recordedAt;
+}
+
 }
