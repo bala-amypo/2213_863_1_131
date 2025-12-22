@@ -8,14 +8,12 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.LoadSheddingEventRepository;
 import com.example.demo.repository.ZoneRestorationRecordRepository;
 import com.example.demo.service.ZoneRestorationService;
-import com.example.demo.service.ZoneService;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.service.ZoneService; 
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
+@Service 
 public class ZoneRestorationServiceImpl implements ZoneRestorationService {
 
     private final ZoneRestorationRecordRepository restorationRepository;

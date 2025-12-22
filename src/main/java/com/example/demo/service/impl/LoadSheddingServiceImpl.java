@@ -10,14 +10,12 @@ import com.example.demo.repository.DemandReadingRepository;
 import com.example.demo.repository.LoadSheddingEventRepository;
 import com.example.demo.repository.SupplyForecastRepository;
 import com.example.demo.service.LoadSheddingService;
-import com.example.demo.service.ZoneService;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.service.ZoneService; 
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
+@Service 
 public class LoadSheddingServiceImpl implements LoadSheddingService {
 
     private final LoadSheddingEventRepository loadSheddingEventRepository;
