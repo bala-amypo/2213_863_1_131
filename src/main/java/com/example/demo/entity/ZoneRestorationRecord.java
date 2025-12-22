@@ -1,15 +1,11 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+
 import java.sql.Timestamp;
 
 @Entity
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class ZoneRestorationRecord {
 
     @Id
