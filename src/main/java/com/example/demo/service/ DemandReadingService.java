@@ -5,8 +5,11 @@ import java.util.List;
 
 public interface DemandReadingService {
 
+    DemandReading createReading(DemandReading reading);
+
     List<DemandReading> getReadingsForZone(Long zoneId);
 
     DemandReading getLatestReading(Long zoneId);
 }
+
 
