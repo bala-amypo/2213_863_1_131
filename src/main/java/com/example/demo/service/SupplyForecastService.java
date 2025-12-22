@@ -1,8 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.SupplyForecast;
+import java.util.List;
 
 public interface SupplyForecastService {
-    SupplyForecast create(SupplyForecast supplyForecast);
-    SupplyForecast getLatest();
+
+    SupplyForecast createForecast(SupplyForecast forecast);
+
+    SupplyForecast getLatestForecast();
+
+    List<SupplyForecast> getAllForecasts();
 }

@@ -1,24 +1,33 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.SupplyForecast;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.SupplyForecastRepository;
-import com.example.demo.service.SupplyForecastService; 
+import com.example.demo.service.SupplyForecastService;
 import org.springframework.stereotype.Service;
 
-@Service 
+import java.util.List;
+
+@Service
 public class SupplyForecastServiceImpl implements SupplyForecastService {
 
-    private final SupplyForecastRepository supplyForecastRepository;
+    private final SupplyForecastRepository repository;
 
-    @Override
-    public SupplyForecast create(SupplyForecast supplyForecast) {
-        return supplyForecastRepository.save(supplyForecast);
+    public SupplyForecastServiceImpl(SupplyForecastRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public SupplyForecast getLatest() {
-        return supplyForecastRepository.findFirstByOrderByGeneratedAtDesc()
-                .orElseThrow(() -> new ResourceNotFoundException("No forecasts"));
+    public SupplyForecast createForecast(SupplyForecast forecast) {
+        return repository.save(forecast);
+    }
+
+    @Override
+    public SupplyForecast getLatestForecast() {
+        return repository.findTopByOrderByGeneratedAtDesc();
+    }
+
+    @Override
+    public List<SupplyForecast> getAllForecasts() {
+        return repository.findAll();
     }
 }
