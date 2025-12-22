@@ -25,4 +25,45 @@ public class SupplyForecast {
     public void generateTime() {
         generatedAt = new Timestamp(System.currentTimeMillis());
     }
+
+    public Long getId() {
+    return id;
+}
+
+public void setId(Long id) {
+    this.id = id;
+}
+
+public Double getAvailableSupplyMW() {
+    return availableSupplyMW;
+}
+
+public void setAvailableSupplyMW(Double availableSupplyMW) {
+    this.availableSupplyMW = availableSupplyMW;
+}
+
+public Timestamp getForecastStart() {
+    return forecastStart;
+}
+
+public void setForecastStart(Timestamp forecastStart) {
+    this.forecastStart = forecastStart;
+}
+
+public Timestamp getForecastEnd() {
+    return forecastEnd;
+}
+
+public void setForecastEnd(Timestamp forecastEnd) {
+    this.forecastEnd = forecastEnd;
+}
+
+public Timestamp getGeneratedAt() {
+    return generatedAt;
+}
+
+public void setGeneratedAt(Timestamp generatedAt) {
+    this.generatedAt = generatedAt;
+}
+
 }
