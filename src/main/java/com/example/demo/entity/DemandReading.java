@@ -1,11 +1,9 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
 import java.sql.Timestamp;
 
 @Entity
-@AllArgsConstructor
 public class DemandReading {
 
     @Id
@@ -18,36 +16,38 @@ public class DemandReading {
     private Double demandMW;
     private Timestamp recordedAt;
 
+    public DemandReading() {
+    }
+
     public Long getId() {
-    return id;
-}
+        return id;
+    }
 
-public void setId(Long id) {
-    this.id = id;
-}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-public Zone getZone() {
-    return zone;
-}
+    public Zone getZone() {
+        return zone;
+    }
 
-public void setZone(Zone zone) {
-    this.zone = zone;
-}
+    public void setZone(Zone zone) {
+        this.zone = zone;
+    }
 
-public Double getDemandMW() {
-    return demandMW;
-}
+    public Double getDemandMW() {
+        return demandMW;
+    }
 
-public void setDemandMW(Double demandMW) {
-    this.demandMW = demandMW;
-}
+    public void setDemandMW(Double demandMW) {
+        this.demandMW = demandMW;
+    }
 
-public Timestamp getRecordedAt() {
-    return recordedAt;
-}
+    public Timestamp getRecordedAt() {
+        return recordedAt;
+    }
 
-public void setRecordedAt(Timestamp recordedAt) {
-    this.recordedAt = recordedAt;
-}
-
+    public void setRecordedAt(Timestamp recordedAt) {
+        this.recordedAt = recordedAt;
+    }
 }
