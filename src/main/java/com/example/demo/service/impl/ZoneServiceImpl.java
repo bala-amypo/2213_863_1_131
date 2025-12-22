@@ -4,13 +4,11 @@ import com.example.demo.entity.Zone;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ZoneRepository;
-import com.example.demo.service.ZoneService;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.service.ZoneService; 
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
+@Service 
 public class ZoneServiceImpl implements ZoneService {
 
     private final ZoneRepository zoneRepository;

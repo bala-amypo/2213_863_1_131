@@ -4,6 +4,9 @@ import com.example.demo.entity.DemandReading;
 import java.util.List;
 
 public interface DemandReadingService {
-    DemandReading create(DemandReading demandReading);
-    List<DemandReading> getByZoneId(Long zoneId);
+
+    List<DemandReading> getReadingsForZone(Long zoneId);
+
+    DemandReading getLatestReading(Long zoneId);
 }
+
