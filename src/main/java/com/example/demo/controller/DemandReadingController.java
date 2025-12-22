@@ -2,33 +2,36 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.DemandReading;
 import com.example.demo.service.DemandReadingService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/demand-readings")
-@Tag(name = "Demand Readings")
+@RequiredArgsConstructor
 public class DemandReadingController {
 
-    private final DemandReadingService service;
+    private final DemandReadingService demandReadingService;
 
-    public DemandReadingController(DemandReadingService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public DemandReading create(@RequestBody DemandReading reading) {
-        return service.createReading(reading);
+    @PostMapping("/")
+    public ResponseEntity<DemandReading> createReading(@RequestBody DemandReading reading) {
+        return ResponseEntity.ok(demandReadingService.createReading(reading));
     }
 
     @GetMapping("/zone/{zoneId}")
-    public List<DemandReading> getForZone(@PathVariable Long zoneId) {
-        return service.getReadingsForZone(zoneId);
+    public ResponseEntity<List<DemandReading>> getReadingsForZone(@PathVariable Long zoneId) {
+        return ResponseEntity.ok(demandReadingService.getReadingsForZone(zoneId));
     }
 
     @GetMapping("/zone/{zoneId}/latest")
-    public DemandReading latest(@PathVariable Long zoneId) {
-        return service.getLatestReading(zoneId);
+    public ResponseEntity<DemandReading> getLatestReading(@PathVariable Long zoneId) {
+        return ResponseEntity.ok(demandReadingService.getLatestReading(zoneId));
+    }
+
+    @GetMapping("/zone/{zoneId}/recent")
+    public ResponseEntity<List<DemandReading>> getRecentReadings(@PathVariable Long zoneId, @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(demandReadingService.getRecentReadings(zoneId, limit));
     }
 }

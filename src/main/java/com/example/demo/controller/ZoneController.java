@@ -2,43 +2,42 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Zone;
 import com.example.demo.service.ZoneService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/zones")
-@Tag(name = "Zones")
+@RequiredArgsConstructor
 public class ZoneController {
 
-    private final ZoneService service;
+    private final ZoneService zoneService;
 
-    public ZoneController(ZoneService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public Zone create(@RequestBody Zone zone) {
-        return service.createZone(zone);
+    @PostMapping("/")
+    public ResponseEntity<Zone> createZone(@RequestBody Zone zone) {
+        return ResponseEntity.ok(zoneService.createZone(zone));
     }
 
     @PutMapping("/{id}")
-    public Zone update(@PathVariable Long id, @RequestBody Zone zone) {
-        return service.updateZone(id, zone);
+    public ResponseEntity<Zone> updateZone(@PathVariable Long id, @RequestBody Zone zone) {
+        return ResponseEntity.ok(zoneService.updateZone(id, zone));
     }
 
     @GetMapping("/{id}")
-    public Zone getById(@PathVariable Long id) {
-        return service.getZoneById(id);
+    public ResponseEntity<Zone> getZoneById(@PathVariable Long id) {
+        return ResponseEntity.ok(zoneService.getZoneById(id));
     }
 
-    @GetMapping
-    public List<Zone> getAll() {
-        return service.getAllZones();
+    @GetMapping("/")
+    public ResponseEntity<List<Zone>> getAllZones() {
+        return ResponseEntity.ok(zoneService.getAllZones());
     }
 
     @PutMapping("/{id}/deactivate")
-    public void deactivate(@PathVariable Long id) {
-        service.deactivateZone(id);
+    public ResponseEntity<Void> deactivateZone(@PathVariable Long id) {
+        zoneService.deactivateZone(id);
+        return ResponseEntity.ok().build();
     }
 }
