@@ -2,81 +2,78 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
-
-
-public class LoadSheddingEvent {
+@Table(name = "supply_forecasts")
+public class SupplyForecast {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Zone zone;
+    @Column(nullable = false)
+    private Double availableSupplyMW;
 
-    private Timestamp eventStart;
-    private Timestamp eventEnd;
-    private String reason;
-    private Long triggeredByForecastId;
-    private Double expectedDemandReductionMW;
+    private Instant forecastStart;
 
-public Long getId() {
-    return id;
-}
+    private Instant forecastEnd;
 
-public void setId(Long id) {
-    this.id = id;
-}
+    private Instant generatedAt;
 
-public Zone getZone() {
-    return zone;
-}
+    public SupplyForecast() {
+    }
 
-public void setZone(Zone zone) {
-    this.zone = zone;
-}
+    public SupplyForecast(Long id, Double availableSupplyMW, Instant forecastStart, Instant forecastEnd, Instant generatedAt) {
+        this.id = id;
+        this.availableSupplyMW = availableSupplyMW;
+        this.forecastStart = forecastStart;
+        this.forecastEnd = forecastEnd;
+        this.generatedAt = generatedAt;
+    }
 
-public Timestamp getEventStart() {
-    return eventStart;
-}
+    public Long getId() {
+        return id;
+    }
 
-public void setEventStart(Timestamp eventStart) {
-    this.eventStart = eventStart;
-}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-public Timestamp getEventEnd() {
-    return eventEnd;
-}
+    public Double getAvailableSupplyMW() {
+        return availableSupplyMW;
+    }
 
-public void setEventEnd(Timestamp eventEnd) {
-    this.eventEnd = eventEnd;
-}
+    public void setAvailableSupplyMW(Double availableSupplyMW) {
+        this.availableSupplyMW = availableSupplyMW;
+    }
 
-public String getReason() {
-    return reason;
-}
+    public Instant getForecastStart() {
+        return forecastStart;
+    }
 
-public void setReason(String reason) {
-    this.reason = reason;
-}
+    public void setForecastStart(Instant forecastStart) {
+        this.forecastStart = forecastStart;
+    }
 
-public Long getTriggeredByForecastId() {
-    return triggeredByForecastId;
-}
+    public Instant getForecastEnd() {
+        return forecastEnd;
+    }
 
-public void setTriggeredByForecastId(Long triggeredByForecastId) {
-    this.triggeredByForecastId = triggeredByForecastId;
-}
+    public void setForecastEnd(Instant forecastEnd) {
+        this.forecastEnd = forecastEnd;
+    }
 
-public Double getExpectedDemandReductionMW() {
-    return expectedDemandReductionMW;
-}
+    public Instant getGeneratedAt() {
+        return generatedAt;
+    }
 
-public void setExpectedDemandReductionMW(Double expectedDemandReductionMW) {
-    this.expectedDemandReductionMW = expectedDemandReductionMW;
-}
+    public void setGeneratedAt(Instant generatedAt) {
+        this.generatedAt = generatedAt;
+    }
 
-
+    @PrePersist
+    protected void onCreate() {
+        generatedAt = Instant.now();
+    }
 }

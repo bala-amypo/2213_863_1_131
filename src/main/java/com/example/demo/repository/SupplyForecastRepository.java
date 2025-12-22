@@ -1,9 +1,12 @@
 package com.example.demo.repository;
 
-import com.example.demo.entity.SupplyForecast;
+import com.example.demo.entity.LoadSheddingEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface SupplyForecastRepository extends JpaRepository<SupplyForecast, Long> {
+import java.util.List;
 
-    SupplyForecast findFirstByOrderByGeneratedAtDesc();
+@Repository
+public interface LoadSheddingEventRepository extends JpaRepository<LoadSheddingEvent, Long> {
+    List<LoadSheddingEvent> findByZoneIdOrderByEventStartDesc(Long zoneId);
 }

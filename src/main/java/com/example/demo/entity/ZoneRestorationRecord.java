@@ -2,10 +2,10 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
-
+@Table(name = "zone_restoration_records")
 public class ZoneRestorationRecord {
 
     @Id
@@ -13,50 +13,63 @@ public class ZoneRestorationRecord {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 
-    private Timestamp restoredAt;
+    private Instant restoredAt;
+
     private Long eventId;
+
     private String notes;
 
+    public ZoneRestorationRecord() {
+    }
+
+    public ZoneRestorationRecord(Long id, Zone zone, Instant restoredAt, Long eventId, String notes) {
+        this.id = id;
+        this.zone = zone;
+        this.restoredAt = restoredAt;
+        this.eventId = eventId;
+        this.notes = notes;
+    }
+
     public Long getId() {
-    return id;
-}
+        return id;
+    }
 
-public void setId(Long id) {
-    this.id = id;
-}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-public Zone getZone() {
-    return zone;
-}
+    public Zone getZone() {
+        return zone;
+    }
 
-public void setZone(Zone zone) {
-    this.zone = zone;
-}
+    public void setZone(Zone zone) {
+        this.zone = zone;
+    }
 
-public Timestamp getRestoredAt() {
-    return restoredAt;
-}
+    public Instant getRestoredAt() {
+        return restoredAt;
+    }
 
-public void setRestoredAt(Timestamp restoredAt) {
-    this.restoredAt = restoredAt;
-}
+    public void setRestoredAt(Instant restoredAt) {
+        this.restoredAt = restoredAt;
+    }
 
-public Long getEventId() {
-    return eventId;
-}
+    public Long getEventId() {
+        return eventId;
+    }
 
-public void setEventId(Long eventId) {
-    this.eventId = eventId;
-}
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
+    }
 
-public String getNotes() {
-    return notes;
-}
+    public String getNotes() {
+        return notes;
+    }
 
-public void setNotes(String notes) {
-    this.notes = notes;
-}
-
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }

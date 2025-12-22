@@ -1,9 +1,11 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
+
+import java.time.Instant;
 
 @Entity
+@Table(name = "demand_readings")
 public class DemandReading {
 
     @Id
@@ -11,12 +13,22 @@ public class DemandReading {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 
+    @Column(nullable = false)
     private Double demandMW;
-    private Timestamp recordedAt;
+
+    private Instant recordedAt;
 
     public DemandReading() {
+    }
+
+    public DemandReading(Long id, Zone zone, Double demandMW, Instant recordedAt) {
+        this.id = id;
+        this.zone = zone;
+        this.demandMW = demandMW;
+        this.recordedAt = recordedAt;
     }
 
     public Long getId() {
@@ -43,11 +55,11 @@ public class DemandReading {
         this.demandMW = demandMW;
     }
 
-    public Timestamp getRecordedAt() {
+    public Instant getRecordedAt() {
         return recordedAt;
     }
 
-    public void setRecordedAt(Timestamp recordedAt) {
+    public void setRecordedAt(Instant recordedAt) {
         this.recordedAt = recordedAt;
     }
 }
