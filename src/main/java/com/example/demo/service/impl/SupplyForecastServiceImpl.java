@@ -54,8 +54,9 @@ public class SupplyForecastServiceImpl implements SupplyForecastService {
 
     @Override
     public SupplyForecast getLatestForecast() {
-        return supplyForecastRepository.findFirstByOrderByGeneratedAtDesc()
-                .orElseThrow(() -> new ResourceNotFoundException("No forecasts found"));
+        return supplyForecastRepository
+        .findFirstByOrderByGeneratedAtDesc()
+        .orElseThrow(() -> new RuntimeException("no fund"));
     }
 
     @Override
