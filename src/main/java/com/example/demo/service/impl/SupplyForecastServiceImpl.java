@@ -15,6 +15,8 @@ import java.util.List;
 public class SupplyForecastServiceImpl implements SupplyForecastService {
 
     private final SupplyForecastRepository supplyForecastRepository;
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+
 
     @Override
     public SupplyForecast createForecast(SupplyForecast forecast) {
