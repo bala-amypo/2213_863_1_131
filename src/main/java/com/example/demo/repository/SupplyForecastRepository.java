@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SupplyForecastRepository
         extends JpaRepository<SupplyForecast, Long> {
+
+    SupplyForecast findFirstByOrderByGeneratedAtDesc();
 }

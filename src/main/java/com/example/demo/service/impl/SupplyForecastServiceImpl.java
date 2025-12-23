@@ -7,6 +7,8 @@ import com.example.demo.repository.SupplyForecastRepository;
 import com.example.demo.service.SupplyForecastService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.sql.Timestamp;
+
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class SupplyForecastServiceImpl implements SupplyForecastService {
         if (forecast.getAvailableSupplyMW() < 0) {
             throw new BadRequestException("Supply must be >= 0");
         }
-        if (!forecast.getForecastStart().isBefore(forecast.getForecastEnd())) {
+        if (!forecast.getForecastStart().before(forecast.getForecastEnd())) {
             throw new BadRequestException("Forecast start must be before end (range)");
         }
         existing.setAvailableSupplyMW(forecast.getAvailableSupplyMW());
