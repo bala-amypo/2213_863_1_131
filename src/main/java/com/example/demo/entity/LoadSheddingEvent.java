@@ -1,7 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 public class LoadSheddingEvent {
@@ -10,35 +10,69 @@ public class LoadSheddingEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long zoneId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    @ManyToOne
+    private Zone zone;
+
+    private Instant eventStart;
+    private Instant eventEnd;
+
+    private String reason;
+    private Long triggeredByForecastId;
+    private Double expectedDemandReductionMW;
+
+    // ===== getters =====
 
     public Long getId() {
         return id;
     }
 
-    public Long getZoneId() {
-        return zoneId;
+    public Zone getZone() {
+        return zone;
     }
 
-    public void setZoneId(Long zoneId) {
-        this.zoneId = zoneId;
+    public Instant getEventStart() {
+        return eventStart;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public Instant getEventEnd() {
+        return eventEnd;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
+    public String getReason() {
+        return reason;
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
+    public Long getTriggeredByForecastId() {
+        return triggeredByForecastId;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public Double getExpectedDemandReductionMW() {
+        return expectedDemandReductionMW;
+    }
+
+    // ===== setters =====
+
+    public void setZone(Zone zone) {
+        this.zone = zone;
+    }
+
+    public void setEventStart(Instant eventStart) {
+        this.eventStart = eventStart;
+    }
+
+    public void setEventEnd(Instant eventEnd) {
+        this.eventEnd = eventEnd;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public void setTriggeredByForecastId(Long triggeredByForecastId) {
+        this.triggeredByForecastId = triggeredByForecastId;
+    }
+
+    public void setExpectedDemandReductionMW(Double expectedDemandReductionMW) {
+        this.expectedDemandReductionMW = expectedDemandReductionMW;
     }
 }
