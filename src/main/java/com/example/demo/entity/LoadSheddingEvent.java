@@ -1,79 +1,44 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "supply_forecasts")
-public class SupplyForecast {
+public class LoadSheddingEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Double availableSupplyMW;
-
-    private Instant forecastStart;
-
-    private Instant forecastEnd;
-
-    private Instant generatedAt;
-
-    public SupplyForecast() {
-    }
-
-    public SupplyForecast(Long id, Double availableSupplyMW, Instant forecastStart, Instant forecastEnd, Instant generatedAt) {
-        this.id = id;
-        this.availableSupplyMW = availableSupplyMW;
-        this.forecastStart = forecastStart;
-        this.forecastEnd = forecastEnd;
-        this.generatedAt = generatedAt;
-    }
+    private Long zoneId;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getZoneId() {
+        return zoneId;
     }
 
-    public Double getAvailableSupplyMW() {
-        return availableSupplyMW;
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
     }
 
-    public void setAvailableSupplyMW(Double availableSupplyMW) {
-        this.availableSupplyMW = availableSupplyMW;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public Instant getForecastStart() {
-        return forecastStart;
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
-    public void setForecastStart(Instant forecastStart) {
-        this.forecastStart = forecastStart;
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
-    public Instant getForecastEnd() {
-        return forecastEnd;
-    }
-
-    public void setForecastEnd(Instant forecastEnd) {
-        this.forecastEnd = forecastEnd;
-    }
-
-    public Instant getGeneratedAt() {
-        return generatedAt;
-    }
-
-    public void setGeneratedAt(Instant generatedAt) {
-        this.generatedAt = generatedAt;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        generatedAt = Instant.now();
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 }
