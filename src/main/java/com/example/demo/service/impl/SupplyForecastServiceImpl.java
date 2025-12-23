@@ -21,7 +21,7 @@ public class SupplyForecastServiceImpl implements SupplyForecastService {
         if (forecast.getAvailableSupplyMW() < 0) {
             throw new BadRequestException("Supply must be >= 0");
         }
-        if (!forecast.getForecastStart().isBefore(forecast.getForecastEnd())) {
+        if (forecast.getGeneratedAt().before(now)){
             throw new BadRequestException("Forecast start must be before end (range)");
         }
         return supplyForecastRepository.save(forecast);
