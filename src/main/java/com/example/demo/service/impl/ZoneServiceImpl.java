@@ -52,7 +52,9 @@ public class ZoneRestorationServiceImpl implements ZoneRestorationService {
             throw new BadRequestExcept
             
             
-            dion("Restoration must be after event start");
+            d
+            .
+            ion("Restoration must be after event start");
         }
 
         return restorationRepository.save(record);
