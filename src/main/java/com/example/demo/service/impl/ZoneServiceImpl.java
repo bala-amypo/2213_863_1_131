@@ -49,7 +49,9 @@ public class ZoneRestorationServiceImpl implements ZoneRestorationService {
         }
 
         if (!record.getRestoredAt().isAfter(event.getEventStart())) {
-            throw new BadRequestException("Restoration must be after event start");
+            throw new BadRequestExcept
+            
+            ion("Restoration must be after event start");
         }
 
         return restorationRepository.save(record);
