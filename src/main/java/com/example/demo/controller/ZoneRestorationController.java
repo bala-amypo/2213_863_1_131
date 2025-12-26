@@ -17,16 +17,19 @@ public class ZoneRestorationController {
         this.zoneRestorationService = zoneRestorationService;
     }
 
+    // Create / restore a zone
     @PostMapping
     public ResponseEntity<ZoneRestorationRecord> restoreZone(@RequestBody ZoneRestorationRecord record) {
         return ResponseEntity.ok(zoneRestorationService.restoreZone(record));
     }
 
+    // Get a restoration record by ID
     @GetMapping("/{id}")
     public ResponseEntity<ZoneRestorationRecord> getRecordById(@PathVariable Long id) {
         return ResponseEntity.ok(zoneRestorationService.getRecordById(id));
     }
 
+    // Get all restoration records for a specific zone
     @GetMapping("/zone/{zoneId}")
     public ResponseEntity<List<ZoneRestorationRecord>> getRecordsByZone(@PathVariable Long zoneId) {
         return ResponseEntity.ok(zoneRestorationService.getRecordsByZoneId(zoneId));
