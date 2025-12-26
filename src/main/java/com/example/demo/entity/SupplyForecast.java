@@ -1,64 +1,38 @@
 package com.example.demo.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import jakarta.persistence.*;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "supply_forecasts")
 public class SupplyForecast {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Double availableSupplyMW;
-    private Timestamp forecastStart;
-    private Timestamp forecastEnd;
-    private Timestamp generatedAt;
+
+    @Column(nullable = false)
+    private Instant forecastStart;
+
+    @Column(nullable = false)
+    private Instant forecastEnd;
+
+    private Instant generatedAt;
 
     @PrePersist
-    public void generateTime() {
-        generatedAt = new Timestamp(System.currentTimeMillis());
+    protected void onCreate() {
+        this.generatedAt = Instant.now();
     }
-
-    public Long getId() {
-    return id;
-}
-
-public void setId(Long id) {
-    this.id = id;
-}
-
-public Double getAvailableSupplyMW() {
-    return availableSupplyMW;
-}
-
-public void setAvailableSupplyMW(Double availableSupplyMW) {
-    this.availableSupplyMW = availableSupplyMW;
-}
-
-public Timestamp getForecastStart() {
-    return forecastStart;
-}
-
-public void setForecastStart(Timestamp forecastStart) {
-    this.forecastStart = forecastStart;
-}
-
-public Timestamp getForecastEnd() {
-    return forecastEnd;
-}
-
-public void setForecastEnd(Timestamp forecastEnd) {
-    this.forecastEnd = forecastEnd;
-}
-
-public Timestamp getGeneratedAt() {
-    return generatedAt;
-}
-
-public void setGeneratedAt(Timestamp generatedAt) {
-    this.generatedAt = generatedAt;
-}
-
 }
