@@ -25,31 +25,25 @@ public class DemandReadingServiceImpl implements DemandReadingService {
     }
 
     @Override
-    public DemandReading recordReading(DemandReading reading) {
+    public DemandReading createReading(DemandReading reading) {
         if (reading.getDemandMW() < 0) {
             throw new BadRequestException("Demand must be >= 0");
         }
         if (reading.getRecordedAt() == null || reading.getRecordedAt().isAfter(Instant.now())) {
             throw new BadRequestException("Recorded time cannot be in the future");
         }
-        
-        // Reading DTO/Entity usually just has ID for zone, but JPA entity needs Zone object.
-        // We need to fetch Zone. Assuming the controller sets the Zone object or ID is available.
-        // If the `reading` object passed here has a Zone with just ID:
         if (reading.getZone() == null || reading.getZone().getId() == null) {
-             throw new BadRequestException("Zone ID is required");
+            throw new ResourceNotFoundException("Zone not found");
         }
-        
         Zone zone = zoneRepository.findById(reading.getZone().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
         reading.setZone(zone);
-
         return demandReadingRepository.save(reading);
     }
 
     @Override
-    public List<DemandReading> getReadingsByZoneId(Long zoneId) {
-        if (!zoneRepository.existsById(zoneId)) {
+    public List<DemandReading> getReadingsForZone(Long zoneId) {
+        if (!zoneRepository.findById(zoneId).isPresent()) {
             throw new ResourceNotFoundException("Zone not found");
         }
         return demandReadingRepository.findByZoneIdOrderByRecordedAtDesc(zoneId);
@@ -57,20 +51,17 @@ public class DemandReadingServiceImpl implements DemandReadingService {
 
     @Override
     public DemandReading getLatestReading(Long zoneId) {
-        if (!zoneRepository.existsById(zoneId)) {
-            throw new ResourceNotFoundException("Zone not found");
-        }
         return demandReadingRepository.findFirstByZoneIdOrderByRecordedAtDesc(zoneId)
-                .orElseThrow(() -> new ResourceNotFoundException("No readings found for this zone"));
+                .orElseThrow(() -> new ResourceNotFoundException("No readings"));
     }
 
     @Override
     public List<DemandReading> getRecentReadings(Long zoneId, int limit) {
-         if (!zoneRepository.existsById(zoneId)) {
+        if (!zoneRepository.findById(zoneId).isPresent()) {
             throw new ResourceNotFoundException("Zone not found");
         }
-        // Using the repo method which orders by desc, then limit in stream
-        return demandReadingRepository.findByZoneIdOrderByRecordedAtDesc(zoneId).stream()
+        return demandReadingRepository.findByZoneIdOrderByRecordedAtDesc(zoneId)
+                .stream()
                 .limit(limit)
                 .collect(Collectors.toList());
     }

@@ -37,68 +37,55 @@ public class LoadSheddingServiceImpl implements LoadSheddingService {
     }
 
     @Override
-    public List<LoadSheddingEvent> triggerLoadShedding(Long forecastId) {
+    public LoadSheddingEvent triggerLoadShedding(Long forecastId) {
         SupplyForecast forecast = forecastRepository.findById(forecastId)
                 .orElseThrow(() -> new ResourceNotFoundException("Forecast not found"));
 
-        // Calculate total demand from latest readings of active zones
         List<Zone> activeZones = zoneRepository.findByActiveTrueOrderByPriorityLevelAsc();
         if (activeZones.isEmpty()) {
             throw new BadRequestException("No suitable zones found for shedding");
         }
 
         double totalDemand = 0;
-        List<DemandReading> currentReadings = new ArrayList<>();
-
         for (Zone zone : activeZones) {
             Optional<DemandReading> reading = demandRepository.findFirstByZoneIdOrderByRecordedAtDesc(zone.getId());
             if (reading.isPresent()) {
                 totalDemand += reading.get().getDemandMW();
-                currentReadings.add(reading.get());
             }
         }
 
         double availableSupply = forecast.getAvailableSupplyMW();
         if (totalDemand <= availableSupply) {
-            throw new BadRequestException("No overload detected (Demand: " + totalDemand + " <= Supply: " + availableSupply + ")");
+            throw new BadRequestException("No overload");
         }
 
         double deficit = totalDemand - availableSupply;
-        List<LoadSheddingEvent> events = new ArrayList<>();
         double shedAmount = 0;
 
-        // Shed zones in order (Priority 1 first, assuming 1 is lowest/sheddable priority based on ASC order requirement)
         for (Zone zone : activeZones) {
             if (shedAmount >= deficit) break;
 
-            // Find current demand for this zone
-            // We optimized by fetching above, but let's re-find or map. 
-            // The loop above iterates same list.
             Optional<DemandReading> readingOpt = demandRepository.findFirstByZoneIdOrderByRecordedAtDesc(zone.getId());
-            
             if (readingOpt.isPresent()) {
                 double zoneDemand = readingOpt.get().getDemandMW();
-                
+
                 LoadSheddingEvent event = LoadSheddingEvent.builder()
                         .zone(zone)
                         .eventStart(Instant.now())
-                        .eventEnd(Instant.now().plusSeconds(3600)) // Default 1 hour? Or forecast end? Let's use Forecast End.
                         .eventEnd(forecast.getForecastEnd())
                         .reason("Load shedding triggered due to supply deficit")
                         .triggeredByForecastId(forecast.getId())
                         .expectedDemandReductionMW(zoneDemand)
                         .build();
 
-                events.add(eventRepository.save(event));
+                LoadSheddingEvent saved = eventRepository.save(event);
                 shedAmount += zoneDemand;
+                // Return the first created event (lowest priority first due to ASC order)
+                return saved;
             }
         }
 
-        if (events.isEmpty()) {
-             throw new BadRequestException("No suitable zones to shed (No active readings)");
-        }
-
-        return events;
+        throw new BadRequestException("No suitable zones");
     }
 
     @Override
@@ -108,10 +95,7 @@ public class LoadSheddingServiceImpl implements LoadSheddingService {
     }
 
     @Override
-    public List<LoadSheddingEvent> getEventsByZoneId(Long zoneId) {
-        if (!zoneRepository.existsById(zoneId)) {
-             throw new ResourceNotFoundException("Zone not found");
-        }
+    public List<LoadSheddingEvent> getEventsForZone(Long zoneId) {
         return eventRepository.findByZoneIdOrderByEventStartDesc(zoneId);
     }
 

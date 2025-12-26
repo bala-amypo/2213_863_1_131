@@ -4,8 +4,8 @@ import com.example.demo.entity.LoadSheddingEvent;
 import java.util.List;
 
 public interface LoadSheddingService {
-    List<LoadSheddingEvent> triggerLoadShedding(Long forecastId);
+    LoadSheddingEvent triggerLoadShedding(Long forecastId);
     LoadSheddingEvent getEventById(Long id);
-    List<LoadSheddingEvent> getEventsByZoneId(Long zoneId);
+    List<LoadSheddingEvent> getEventsForZone(Long zoneId);
     List<LoadSheddingEvent> getAllEvents();
 }
