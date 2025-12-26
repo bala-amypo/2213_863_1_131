@@ -12,6 +12,11 @@ import com.example.demo.service.ZoneRestorationService;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+
 @Service
 public class ZoneRestorationServiceImpl implements ZoneRestorationService {
 

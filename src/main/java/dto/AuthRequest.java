@@ -6,6 +6,7 @@ package com.example.demo.dto;
 @NoArgsConstructor
 @AllArgsConstructor
 
+
 public class AuthRequest {
 
     private String email;
