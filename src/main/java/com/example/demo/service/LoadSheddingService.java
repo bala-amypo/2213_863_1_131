@@ -8,4 +8,6 @@ public interface LoadSheddingService {
     LoadSheddingEvent getEventById(Long id);
     List<LoadSheddingEvent> getEventsForZone(Long zoneId);
     List<LoadSheddingEvent> getAllEvents();
+    List<LoadSheddingEvent> getEventsByZoneId(Long zoneId);
 }
+
