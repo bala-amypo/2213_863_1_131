@@ -8,7 +8,9 @@ import com.example.demo.service.ZoneService;
 
 import java.time.Instant;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ZoneServiceImpl implements ZoneService {
 
     private final ZoneRepository zoneRepository;
