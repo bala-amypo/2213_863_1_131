@@ -1,14 +1,8 @@
 package com.example.demo.entity;
 
-import lombok.*;
 import jakarta.persistence.*;
 
 @Entity
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "roles")
 public class Role {
 
@@ -19,6 +13,7 @@ public class Role {
     private String name;
 
     public Role() {
+        // default constructor required by JPA
     }
 
     public Long getId() {
