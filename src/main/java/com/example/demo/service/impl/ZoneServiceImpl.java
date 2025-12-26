@@ -36,24 +36,6 @@ public class ZoneRestorationServiceImpl implements ZoneRestorationService {
 
         LoadSheddingEvent event = eventRepository.findById(record.getEvent().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found"));
-        record.setEvent(event);
-
-        if (record.getZone() == null || record.getZone().getId() == null) {
-            record.setZone(event.getZone());
-        } else if (!record.getZone().getId().equals(event.getZone().getId())) {
-            throw new BadRequestException("Zone mismatch with event");
-        } else {
-            Zone zone = zoneRepository.findById(record.getZone().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
-            record.setZone(zone);
-        }
-
-        if (!record.getRestoredAt().isAfter(event.getEventStart())) {
-            throw new BadRequestException("Restoration must be after event start");
-        }
-
-        return restorationRepository.save(record);
-    }
 
     @Override
     public ZoneRestorationRecord getRecordById(Long id) {
