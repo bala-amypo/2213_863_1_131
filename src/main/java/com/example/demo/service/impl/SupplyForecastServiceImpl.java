@@ -11,9 +11,9 @@ import java.util.List;
 
 @Service
 public class SupplyForecastServiceImpl implements SupplyForecastService {
-
+    
     private final SupplyForecastRepository supplyForecastRepository;
-
+    
     public SupplyForecastServiceImpl(SupplyForecastRepository supplyForecastRepository) {
         this.supplyForecastRepository = supplyForecastRepository;
     }
@@ -23,28 +23,24 @@ public class SupplyForecastServiceImpl implements SupplyForecastService {
         if (forecast.getAvailableSupplyMW() < 0) {
             throw new BadRequestException("Supply must be >= 0");
         }
-        if (forecast.getForecastStart().isAfter(forecast.getForecastEnd()) || forecast.getForecastStart().equals(forecast.getForecastEnd())) {
-            throw new BadRequestException("Forecast range invalid (Start must be before End)");
+        
+        if (forecast.getForecastStart().isAfter(forecast.getForecastEnd())) {
+            throw new BadRequestException("Invalid time range");
         }
+        
         return supplyForecastRepository.save(forecast);
     }
 
     @Override
-    public SupplyForecast updateForecast(Long id, SupplyForecast forecastDetails) {
-        SupplyForecast forecast = getForecastById(id);
+    public SupplyForecast updateForecast(Long id, SupplyForecast forecast) {
+        SupplyForecast existingForecast = supplyForecastRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Forecast not found"));
         
-        if (forecastDetails.getAvailableSupplyMW() < 0) {
-            throw new BadRequestException("Supply must be >= 0");
-        }
-        if (forecastDetails.getForecastStart().isAfter(forecastDetails.getForecastEnd())) {
-             throw new BadRequestException("Forecast range invalid");
-        }
-
-        forecast.setAvailableSupplyMW(forecastDetails.getAvailableSupplyMW());
-        forecast.setForecastStart(forecastDetails.getForecastStart());
-        forecast.setForecastEnd(forecastDetails.getForecastEnd());
+        existingForecast.setAvailableSupplyMW(forecast.getAvailableSupplyMW());
+        existingForecast.setForecastStart(forecast.getForecastStart());
+        existingForecast.setForecastEnd(forecast.getForecastEnd());
         
-        return supplyForecastRepository.save(forecast);
+        return supplyForecastRepository.save(existingForecast);
     }
 
     @Override
@@ -56,7 +52,7 @@ public class SupplyForecastServiceImpl implements SupplyForecastService {
     @Override
     public SupplyForecast getLatestForecast() {
         return supplyForecastRepository.findFirstByOrderByGeneratedAtDesc()
-                .orElseThrow(() -> new ResourceNotFoundException("No forecasts found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No forecasts"));
     }
 
     @Override
