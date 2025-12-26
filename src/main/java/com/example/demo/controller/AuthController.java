@@ -1,3 +1,18 @@
+package com.example.demo.controller;
+
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.entity.AppUser;
+import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.service.AppUserService;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -40,11 +55,13 @@ public class AuthController {
 
         String token = tokenProvider.createToken(user);
 
-        return ResponseEntity.ok(AuthResponse.builder()
-                .token(token)
-                .userId(user.getId())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build());
+        return ResponseEntity.ok(
+                AuthResponse.builder()
+                        .token(token)
+                        .userId(user.getId())
+                        .email(user.getEmail())
+                        .role(user.getRole())
+                        .build()
+        );
     }
 }
