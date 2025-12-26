@@ -48,6 +48,14 @@ public class DemandReadingServiceImpl implements DemandReadingService {
         reading.setZone(zone);
         return demandReadingRepository.save(reading);
     }
+    @Override
+public List<DemandReading> getRecentReadings(Long zoneId, int limit) {
+    return demandReadingRepository
+            .findByZoneIdOrderByRecordedAtDesc(zoneId)
+            .stream()
+            .limit(limit)
+            .toList();
+}
 
     @Override
     public List<DemandReading> getReadingsByZoneId(Long zoneId) {
