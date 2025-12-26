@@ -34,7 +34,7 @@ public class DemandReadingServiceImpl implements DemandReadingService {
         }
 
         if (reading.getRecordedAt() == null ||
-            reading.getRecordedAt().isAfter(Instant.now())) {
+                reading.getRecordedAt().isAfter(Instant.now())) {
             throw new BadRequestException("Invalid recorded time");
         }
 
@@ -48,14 +48,27 @@ public class DemandReadingServiceImpl implements DemandReadingService {
         reading.setZone(zone);
         return demandReadingRepository.save(reading);
     }
+
     @Override
-public List<DemandReading> getRecentReadings(Long zoneId, int limit) {
-    return demandReadingRepository
-            .findByZoneIdOrderByRecordedAtDesc(zoneId)
-            .stream()
-            .limit(limit)
-            .toList();
-}
+    public DemandReading getLatestReading(Long zoneId) {
+
+        if (!zoneRepository.existsById(zoneId)) {
+            throw new ResourceNotFoundException("Zone not found");
+        }
+
+        return demandReadingRepository
+                .findFirstByZoneIdOrderByRecordedAtDesc(zoneId)
+                .orElseThrow(() -> new ResourceNotFoundException("No demand readings found"));
+    }
+
+    @Override
+    public List<DemandReading> getRecentReadings(Long zoneId, int limit) {
+        return demandReadingRepository
+                .findByZoneIdOrderByRecordedAtDesc(zoneId)
+                .stream()
+                .limit(limit)
+                .toList();
+    }
 
     @Override
     public List<DemandReading> getReadingsByZoneId(Long zoneId) {
