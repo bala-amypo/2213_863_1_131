@@ -6,8 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,11 +17,9 @@ public class ZoneRestorationRecord {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
     private LoadSheddingEvent event;
 
     private LocalDateTime restoredAt;
