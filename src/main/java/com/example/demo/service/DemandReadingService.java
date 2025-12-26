@@ -9,5 +9,7 @@ public interface DemandReadingService {
 
     List<DemandReading> getReadingsByZoneId(Long zoneId);
 
+    DemandReading getLatestReading(Long zoneId);
+
     List<DemandReading> getRecentReadings(Long zoneId, int limit);
 }
