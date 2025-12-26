@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -20,7 +19,9 @@ public class AuthController {
     private final JwtTokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController(AppUserService appUserService, JwtTokenProvider tokenProvider, PasswordEncoder passwordEncoder) {
+    public AuthController(AppUserService appUserService,
+                          JwtTokenProvider tokenProvider,
+                          PasswordEncoder passwordEncoder) {
         this.appUserService = appUserService;
         this.tokenProvider = tokenProvider;
         this.passwordEncoder = passwordEncoder;
@@ -28,37 +29,33 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AppUser> register(@RequestBody AuthRequest request) {
-        // Assume default role or extract from request if DTO allowed. 
-        // Prompt DTO "AuthRequest" only has email/password.
-        // So we default role to "USER".
-        AppUser user = AppUser.builder()
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .role("USER")
-                .active(true)
-                .build();
+
+        AppUser user = new AppUser();
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setRole("USER");
+        user.setActive(true);
+
         return ResponseEntity.ok(appUserService.registerUser(user));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        // Authenticate logic. 
-        // Since we didn't inject AuthenticationManager (requires config), we can do manual check?
-        // Or configure AuthenticationManager in SecurityConfig. 
-        // Standard Spring Security JWT usually uses AuthenticationManager.
-        // However, I can manually check password using PasswordEncoder.
+
         AppUser user = appUserService.findByEmail(request.getEmail());
+
         if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-             throw new RuntimeException("Invalid credentials"); // Or BadCredentialsException
+            throw new RuntimeException("Invalid credentials");
         }
 
         String token = tokenProvider.createToken(user);
-        
-        return ResponseEntity.ok(AuthResponse.builder()
-                .token(token)
-                .userId(user.getId())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build());
+
+        AuthResponse response = new AuthResponse();
+        response.setUserId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole());
+        response.setToken(token);
+
+        return ResponseEntity.ok(response);
     }
 }
