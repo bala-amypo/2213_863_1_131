@@ -5,45 +5,46 @@ import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.SupplyForecastRepository;
 import com.example.demo.service.SupplyForecastService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.sql.Timestamp;
-
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class SupplyForecastServiceImpl implements SupplyForecastService {
 
     private final SupplyForecastRepository supplyForecastRepository;
-    Timestamp now = new Timestamp(System.currentTimeMillis());
 
+    public SupplyForecastServiceImpl(SupplyForecastRepository supplyForecastRepository) {
+        this.supplyForecastRepository = supplyForecastRepository;
+    }
 
     @Override
     public SupplyForecast createForecast(SupplyForecast forecast) {
         if (forecast.getAvailableSupplyMW() < 0) {
             throw new BadRequestException("Supply must be >= 0");
         }
-        if (forecast.getGeneratedAt().before(now)){
-            throw new BadRequestException("Forecast start must be before end (range)");
+        if (forecast.getForecastStart().isAfter(forecast.getForecastEnd()) || forecast.getForecastStart().equals(forecast.getForecastEnd())) {
+            throw new BadRequestException("Forecast range invalid (Start must be before End)");
         }
         return supplyForecastRepository.save(forecast);
     }
 
     @Override
-    public SupplyForecast updateForecast(Long id, SupplyForecast forecast) {
-        SupplyForecast existing = getForecastById(id);
-        if (forecast.getAvailableSupplyMW() < 0) {
+    public SupplyForecast updateForecast(Long id, SupplyForecast forecastDetails) {
+        SupplyForecast forecast = getForecastById(id);
+        
+        if (forecastDetails.getAvailableSupplyMW() < 0) {
             throw new BadRequestException("Supply must be >= 0");
         }
-        if (!forecast.getForecastStart().before(forecast.getForecastEnd())) {
-            throw new BadRequestException("Forecast start must be before end (range)");
+        if (forecastDetails.getForecastStart().isAfter(forecastDetails.getForecastEnd())) {
+             throw new BadRequestException("Forecast range invalid");
         }
-        existing.setAvailableSupplyMW(forecast.getAvailableSupplyMW());
-        existing.setForecastStart(forecast.getForecastStart());
-        existing.setForecastEnd(forecast.getForecastEnd());
-        return supplyForecastRepository.save(existing);
+
+        forecast.setAvailableSupplyMW(forecastDetails.getAvailableSupplyMW());
+        forecast.setForecastStart(forecastDetails.getForecastStart());
+        forecast.setForecastEnd(forecastDetails.getForecastEnd());
+        
+        return supplyForecastRepository.save(forecast);
     }
 
     @Override
@@ -54,9 +55,8 @@ public class SupplyForecastServiceImpl implements SupplyForecastService {
 
     @Override
     public SupplyForecast getLatestForecast() {
-        return supplyForecastRepository
-        .findFirstByOrderByGeneratedAtDesc()
-        .orElseThrow(() -> new RuntimeException("no fund"));
+        return supplyForecastRepository.findFirstByOrderByGeneratedAtDesc()
+                .orElseThrow(() -> new ResourceNotFoundException("No forecasts found"));
     }
 
     @Override
