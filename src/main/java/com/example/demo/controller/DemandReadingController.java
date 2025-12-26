@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.DemandReading;
+import com.example.demo.entity.Zone;
 import com.example.demo.service.DemandReadingService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,19 +10,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/demand-readings")
-@RequiredArgsConstructor
 public class DemandReadingController {
 
     private final DemandReadingService demandReadingService;
 
-    @PostMapping("/")
-    public ResponseEntity<DemandReading> createReading(@RequestBody DemandReading reading) {
-        return ResponseEntity.ok(demandReadingService.createReading(reading));
+    public DemandReadingController(DemandReadingService demandReadingService) {
+        this.demandReadingService = demandReadingService;
+    }
+
+    @PostMapping
+    public ResponseEntity<DemandReading> recordReading(@RequestBody DemandReading reading) {
+        // Validation handled in service.
+        // Assuming JSON includes "zone": { "id": 1 } structure or handled by Jackson deserialization into entity
+        return ResponseEntity.ok(demandReadingService.recordReading(reading));
     }
 
     @GetMapping("/zone/{zoneId}")
-    public ResponseEntity<List<DemandReading>> getReadingsForZone(@PathVariable Long zoneId) {
-        return ResponseEntity.ok(demandReadingService.getReadingsForZone(zoneId));
+    public ResponseEntity<List<DemandReading>> getReadingsByZone(@PathVariable Long zoneId) {
+        return ResponseEntity.ok(demandReadingService.getReadingsByZoneId(zoneId));
     }
 
     @GetMapping("/zone/{zoneId}/latest")

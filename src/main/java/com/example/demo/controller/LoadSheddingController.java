@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.LoadSheddingEvent;
 import com.example.demo.service.LoadSheddingService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +9,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/load-shedding")
-@RequiredArgsConstructor
 public class LoadSheddingController {
 
     private final LoadSheddingService loadSheddingService;
 
+    public LoadSheddingController(LoadSheddingService loadSheddingService) {
+        this.loadSheddingService = loadSheddingService;
+    }
+
     @PostMapping("/trigger/{forecastId}")
-    public ResponseEntity<LoadSheddingEvent> triggerLoadShedding(@PathVariable Long forecastId) {
+    public ResponseEntity<List<LoadSheddingEvent>> triggerLoadShedding(@PathVariable Long forecastId) {
         return ResponseEntity.ok(loadSheddingService.triggerLoadShedding(forecastId));
     }
 
@@ -26,11 +28,11 @@ public class LoadSheddingController {
     }
 
     @GetMapping("/zone/{zoneId}")
-    public ResponseEntity<List<LoadSheddingEvent>> getEventsForZone(@PathVariable Long zoneId) {
-        return ResponseEntity.ok(loadSheddingService.getEventsForZone(zoneId));
+    public ResponseEntity<List<LoadSheddingEvent>> getEventsByZone(@PathVariable Long zoneId) {
+        return ResponseEntity.ok(loadSheddingService.getEventsByZoneId(zoneId));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<LoadSheddingEvent>> getAllEvents() {
         return ResponseEntity.ok(loadSheddingService.getAllEvents());
     }

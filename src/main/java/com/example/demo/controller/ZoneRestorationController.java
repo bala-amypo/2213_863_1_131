@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.ZoneRestorationRecord;
 import com.example.demo.service.ZoneRestorationService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,12 +9,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/restorations")
-@RequiredArgsConstructor
 public class ZoneRestorationController {
 
     private final ZoneRestorationService zoneRestorationService;
 
-    @PostMapping("/")
+    public ZoneRestorationController(ZoneRestorationService zoneRestorationService) {
+        this.zoneRestorationService = zoneRestorationService;
+    }
+
+    @PostMapping
     public ResponseEntity<ZoneRestorationRecord> restoreZone(@RequestBody ZoneRestorationRecord record) {
         return ResponseEntity.ok(zoneRestorationService.restoreZone(record));
     }
@@ -26,7 +28,7 @@ public class ZoneRestorationController {
     }
 
     @GetMapping("/zone/{zoneId}")
-    public ResponseEntity<List<ZoneRestorationRecord>> getRecordsForZone(@PathVariable Long zoneId) {
-        return ResponseEntity.ok(zoneRestorationService.getRecordsForZone(zoneId));
+    public ResponseEntity<List<ZoneRestorationRecord>> getRecordsByZone(@PathVariable Long zoneId) {
+        return ResponseEntity.ok(zoneRestorationService.getRecordsByZoneId(zoneId));
     }
 }
