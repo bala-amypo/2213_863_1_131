@@ -4,11 +4,10 @@ import com.example.demo.entity.DemandReading;
 import java.util.List;
 
 public interface DemandReadingService {
-    DemandReading createReading(DemandReading reading);
-    List<DemandReading> getReadingsForZone(Long zoneId);
-    DemandReading getLatestReading(Long zoneId);
-    List<DemandReading> getRecentReadings(Long zoneId, int limit);
-     DemandReading recordReading(DemandReading reading);
+
+    DemandReading recordReading(DemandReading reading);
 
     List<DemandReading> getReadingsByZoneId(Long zoneId);
+
+    List<DemandReading> getRecentReadings(Long zoneId, int limit);
 }
