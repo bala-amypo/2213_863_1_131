@@ -1,15 +1,12 @@
 package com.example.demo.dto;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class RegisterRequest {
 
     private String email;
     private String password;
     private String role;
 
-    public RegisterRequest() {
-    }
+    public RegisterRequest() {}
 
     public String getEmail() {
         return email;
