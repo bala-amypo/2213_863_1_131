@@ -20,11 +20,9 @@ public class ZoneRestorationServiceImpl implements ZoneRestorationService {
     private final LoadSheddingEventRepository eventRepository;
     private final ZoneRepository zoneRepository;
 
-    public ZoneRestorationServiceImpl(
-            ZoneRestorationRecordRepository restorationRepository,
-            LoadSheddingEventRepository eventRepository,
-            ZoneRepository zoneRepository) {
-
+    public ZoneRestorationServiceImpl(ZoneRestorationRecordRepository restorationRepository,
+                                      LoadSheddingEventRepository eventRepository,
+                                      ZoneRepository zoneRepository) {
         this.restorationRepository = restorationRepository;
         this.eventRepository = eventRepository;
         this.zoneRepository = zoneRepository;
@@ -32,30 +30,39 @@ public class ZoneRestorationServiceImpl implements ZoneRestorationService {
 
     @Override
     public ZoneRestorationRecord restoreZone(ZoneRestorationRecord record) {
-
-        if (record.getEvent() == null || record.getEvent().getId() == null) {
-            throw new BadRequestException("Event not specified");
-        }
-
-        LoadSheddingEvent event = eventRepository.findById(record.getEvent().getId())
+        LoadSheddingEvent event = eventRepository.findById(record.getEventId())
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found"));
 
-        record.setEvent(event);
-
+        // Ensure zone in record matches or is set correctly
+        // The record might come with just zoneId in DTO usually, but here Entity has Zone object.
+        // If Zone object is missing or just ID:
         if (record.getZone() == null || record.getZone().getId() == null) {
+            // Can satisfy from event
             record.setZone(event.getZone());
         } else {
-            if (!record.getZone().getId().equals(event.getZone().getId())) {
-                throw new BadRequestException("Zone mismatch with event");
-            }
-
-            Zone zone = zoneRepository.findById(record.getZone().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
-            record.setZone(zone);
+             // Validate it matches event
+             if (!record.getZone().getId().equals(event.getZone().getId())) {
+                 throw new BadRequestException("Zone in restoration record does not match Event's zone");
+             }
+             // Ensure it exists (loaded)
+             Zone zone = zoneRepository.findById(record.getZone().getId())
+                     .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+             record.setZone(zone);
         }
 
-        if (!record.getRestoredAt().isAfter(event.getEventStart())) {
-            throw new BadRequestException("Restoration must be after event start");
+        if (record.getRestoredAt().isBefore(event.getEventStart()) || record.getRestoredAt().equals(event.getEventStart())) {
+            throw new BadRequestException("Restoration time cannot be on or after event start... wait, prompt says 'restoredAt <= eventStart -> BadRequest'. So matches.");
+            // Prompt: "restoredAt <= eventStart" -> BadRequestException with "after event start"
+            // Wait, message "after event start" implies the ERROR is that it is BEFORE?
+            // "restoredAt <= eventStart" means restoration happened BEFORE or AT START.
+            // That is obviously wrong (can't restore before shed).
+            // So if (restoredAt <= Start) -> Error("after event start").
+            // The message "after event start" is slightly confusing phrasing for "Must be after event start", 
+            // but I must strictly use the message string: "after event start".
+        }
+        
+        if (record.getRestoredAt().isBefore(event.getEventStart()) || record.getRestoredAt().equals(event.getEventStart())) {
+             throw new BadRequestException("Restoration must be after event start");
         }
 
         return restorationRepository.save(record);
@@ -68,13 +75,10 @@ public class ZoneRestorationServiceImpl implements ZoneRestorationService {
     }
 
     @Override
-    public List<ZoneRestorationRecord> getRecordsForZone(Long zoneId) {
-
+    public List<ZoneRestorationRecord> getRecordsByZoneId(Long zoneId) {
         if (!zoneRepository.existsById(zoneId)) {
-            throw new ResourceNotFoundException("Zone not found");
+             throw new ResourceNotFoundException("Zone not found");
         }
-
-        return restorationRepository
-                .findByZoneIdOrderByRestoredAtDesc(zoneId);
+        return restorationRepository.findByZoneIdOrderByRestoredAtDesc(zoneId);
     }
 }
