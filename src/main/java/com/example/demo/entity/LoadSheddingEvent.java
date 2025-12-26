@@ -1,78 +1,39 @@
 package com.example.demo.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "load_shedding_events")
 public class LoadSheddingEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 
+    @Column(nullable = false)
     private Instant eventStart;
+
+    @Column(nullable = false)
     private Instant eventEnd;
 
     private String reason;
+
     private Long triggeredByForecastId;
+
+    @Column(nullable = false)
     private Double expectedDemandReductionMW;
-
-    // ===== getters =====
-
-    public Long getId() {
-        return id;
-    }
-
-    public Zone getZone() {
-        return zone;
-    }
-
-    public Instant getEventStart() {
-        return eventStart;
-    }
-
-    public Instant getEventEnd() {
-        return eventEnd;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public Long getTriggeredByForecastId() {
-        return triggeredByForecastId;
-    }
-
-    public Double getExpectedDemandReductionMW() {
-        return expectedDemandReductionMW;
-    }
-
-    // ===== setters =====
-
-    public void setZone(Zone zone) {
-        this.zone = zone;
-    }
-
-    public void setEventStart(Instant eventStart) {
-        this.eventStart = eventStart;
-    }
-
-    public void setEventEnd(Instant eventEnd) {
-        this.eventEnd = eventEnd;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public void setTriggeredByForecastId(Long triggeredByForecastId) {
-        this.triggeredByForecastId = triggeredByForecastId;
-    }
-
-    public void setExpectedDemandReductionMW(Double expectedDemandReductionMW) {
-        this.expectedDemandReductionMW = expectedDemandReductionMW;
-    }
 }
