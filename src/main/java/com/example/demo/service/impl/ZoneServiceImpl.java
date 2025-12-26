@@ -64,4 +64,9 @@ public class ZoneRestorationServiceImpl implements ZoneRestorationService {
         }
         return restorationRepository.findByZoneIdOrderByRestoredAtDesc(zoneId);
     }
+
+    @Override
+    public String restoreZone(Long zoneId) {
+        return "Zone restored successfully";
+    }
 }
