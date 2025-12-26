@@ -59,16 +59,16 @@ public class ZoneServiceImpl implements ZoneService {
     public List<Zone> getAllZones() {
         return zoneRepository.findAll();
     }
+@Override
+public Zone deactivateZone(Long id) {
 
-    @Override
-    public void deactivateZone(Long id) {
+    Zone zone = zoneRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
 
-        Zone zone = zoneRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+    zone.setActive(false);
+    zone.setUpdatedAt(Instant.now());
 
-        zone.setActive(false);
-        zone.setUpdatedAt(Instant.now());
+    return zoneRepository.save(zone);
+}
 
-        zoneRepository.save(zone);
-    }
 }
