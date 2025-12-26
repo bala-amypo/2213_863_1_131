@@ -13,7 +13,7 @@ import com.example.demo.repository.ZoneRepository;
 import com.example.demo.service.LoadSheddingService;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,12 +43,15 @@ public class LoadSheddingServiceImpl implements LoadSheddingService {
         SupplyForecast forecast = forecastRepository.findById(forecastId)
                 .orElseThrow(() -> new ResourceNotFoundException("Forecast not found"));
 
-        List<Zone> activeZones = zoneRepository.findByActiveTrueOrderByPriorityLevelAsc();
+        List<Zone> activeZones =
+                zoneRepository.findByActiveTrueOrderByPriorityLevelAsc();
+
         if (activeZones.isEmpty()) {
             throw new BadRequestException("No active zones available");
         }
 
         double totalDemand = 0;
+
         for (Zone zone : activeZones) {
             Optional<DemandReading> reading =
                     demandRepository.findFirstByZoneIdOrderByRecordedAtDesc(zone.getId());
@@ -57,35 +60,23 @@ public class LoadSheddingServiceImpl implements LoadSheddingService {
             }
         }
 
-        double availableSupply = forecast.getAvailableSupplyMW();
-        if (totalDemand <= availableSupply) {
+        if (totalDemand <= forecast.getAvailableSupplyMW()) {
             throw new BadRequestException("No overload detected");
         }
 
-        double deficit = totalDemand - availableSupply;
-        double shedAmount = 0;
-
         for (Zone zone : activeZones) {
-            if (shedAmount >= deficit) {
-                break;
-            }
 
             Optional<DemandReading> readingOpt =
                     demandRepository.findFirstByZoneIdOrderByRecordedAtDesc(zone.getId());
 
             if (readingOpt.isPresent()) {
-                double zoneDemand = readingOpt.get().getDemandMW();
 
                 LoadSheddingEvent event = new LoadSheddingEvent();
                 event.setZone(zone);
-                event.setEventStart(Instant.now());
+                event.setEventStart(LocalDateTime.now());
                 event.setReason("AUTO_LOAD_SHEDDING");
 
-                LoadSheddingEvent savedEvent = eventRepository.save(event);
-                shedAmount += zoneDemand;
-
-                // Return first event created (lowest priority zone)
-                return savedEvent;
+                return eventRepository.save(event);
             }
         }
 
