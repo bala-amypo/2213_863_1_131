@@ -24,7 +24,7 @@ public class SwaggerConfig {
                         .description("API for managing smart grid load shedding operations")
                 )
                 .servers(List.of(
-                        new Server().url("https://9104.32procr.amypo.ai//")
+                        new Server().url("https://9104.32procr.amypo.ai/")
                 ))
                 // 🔐 Enable auth globally
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
