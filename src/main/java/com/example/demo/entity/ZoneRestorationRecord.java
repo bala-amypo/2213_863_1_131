@@ -1,34 +1,29 @@
 package com.example.demo.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.persistence.*;
-import java.time.Instant;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "zone_restoration_records")
 public class ZoneRestorationRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 
-    @Column(nullable = false)
-    private Instant restoredAt;
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private LoadSheddingEvent event;
 
-    @Column(nullable = false)
-    private Long eventId;
-
-    private String notes;
+    private LocalDateTime restoredAt;
 }

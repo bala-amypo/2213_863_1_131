@@ -1,39 +1,27 @@
 package com.example.demo.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.persistence.*;
-import java.time.Instant;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "load_shedding_events")
 public class LoadSheddingEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "zone_id", nullable = false)
-    private Zone zone;
+    private LocalDateTime eventStart;
 
-    @Column(nullable = false)
-    private Instant eventStart;
+    private LocalDateTime eventEnd;
 
-    @Column(nullable = false)
-    private Instant eventEnd;
+    private Double demandMW;
 
-    private String reason;
-
-    private Long triggeredByForecastId;
-
-    @Column(nullable = false)
-    private Double expectedDemandReductionMW;
+    private Boolean active;
 }

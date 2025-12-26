@@ -3,6 +3,11 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "roles")
 public class Role {
 
