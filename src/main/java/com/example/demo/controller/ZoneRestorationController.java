@@ -6,38 +6,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 
 @RestController
 @RequestMapping("/api/restorations")
 public class ZoneRestorationController {
-
+    
     private final ZoneRestorationService zoneRestorationService;
-
+    
     public ZoneRestorationController(ZoneRestorationService zoneRestorationService) {
         this.zoneRestorationService = zoneRestorationService;
     }
 
     @PostMapping
     public ResponseEntity<ZoneRestorationRecord> restoreZone(@RequestBody ZoneRestorationRecord record) {
-        return ResponseEntity.ok(zoneRestorationService.restoreZone(record));
+        ZoneRestorationRecord restorationRecord = zoneRestorationService.restoreZone(record);
+        return ResponseEntity.ok(restorationRecord);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ZoneRestorationRecord> getRecordById(@PathVariable Long id) {
-        return ResponseEntity.ok(zoneRestorationService.getRecordById(id));
+    public ResponseEntity<ZoneRestorationRecord> getRecord(@PathVariable Long id) {
+        ZoneRestorationRecord record = zoneRestorationService.getRecordById(id);
+        return ResponseEntity.ok(record);
     }
 
     @GetMapping("/zone/{zoneId}")
-    public ResponseEntity<List<ZoneRestorationRecord>> getRecordsByZone(@PathVariable Long zoneId) {
-        return ResponseEntity.ok(zoneRestorationService.getRecordsByZoneId(zoneId));
+    public ResponseEntity<List<ZoneRestorationRecord>> getRecordsForZone(@PathVariable Long zoneId) {
+        List<ZoneRestorationRecord> records = zoneRestorationService.getRecordsForZone(zoneId);
+        return ResponseEntity.ok(records);
     }
 }

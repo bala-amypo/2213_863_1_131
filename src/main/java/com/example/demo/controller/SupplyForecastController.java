@@ -10,35 +10,40 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/supply-forecasts")
 public class SupplyForecastController {
-
+    
     private final SupplyForecastService supplyForecastService;
-
+    
     public SupplyForecastController(SupplyForecastService supplyForecastService) {
         this.supplyForecastService = supplyForecastService;
     }
 
     @PostMapping
     public ResponseEntity<SupplyForecast> createForecast(@RequestBody SupplyForecast forecast) {
-        return ResponseEntity.ok(supplyForecastService.createForecast(forecast));
+        SupplyForecast createdForecast = supplyForecastService.createForecast(forecast);
+        return ResponseEntity.ok(createdForecast);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SupplyForecast> updateForecast(@PathVariable Long id, @RequestBody SupplyForecast forecast) {
-        return ResponseEntity.ok(supplyForecastService.updateForecast(id, forecast));
+        SupplyForecast updatedForecast = supplyForecastService.updateForecast(id, forecast);
+        return ResponseEntity.ok(updatedForecast);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SupplyForecast> getForecastById(@PathVariable Long id) {
-        return ResponseEntity.ok(supplyForecastService.getForecastById(id));
+    public ResponseEntity<SupplyForecast> getForecast(@PathVariable Long id) {
+        SupplyForecast forecast = supplyForecastService.getForecastById(id);
+        return ResponseEntity.ok(forecast);
     }
 
     @GetMapping("/latest")
     public ResponseEntity<SupplyForecast> getLatestForecast() {
-        return ResponseEntity.ok(supplyForecastService.getLatestForecast());
+        SupplyForecast forecast = supplyForecastService.getLatestForecast();
+        return ResponseEntity.ok(forecast);
     }
 
     @GetMapping
     public ResponseEntity<List<SupplyForecast>> getAllForecasts() {
-        return ResponseEntity.ok(supplyForecastService.getAllForecasts());
+        List<SupplyForecast> forecasts = supplyForecastService.getAllForecasts();
+        return ResponseEntity.ok(forecasts);
     }
 }
