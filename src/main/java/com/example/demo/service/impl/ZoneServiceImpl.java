@@ -1,82 +1,71 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.LoadSheddingEvent;
 import com.example.demo.entity.Zone;
-import com.example.demo.entity.ZoneRestorationRecord;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.LoadSheddingEventRepository;
 import com.example.demo.repository.ZoneRepository;
-import com.example.demo.repository.ZoneRestorationRecordRepository;
-import com.example.demo.service.ZoneRestorationService;
+import com.example.demo.service.ZoneService;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 import java.util.List;
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 
 @Service
-public class ZoneRestorationServiceImpl implements ZoneRestorationService {
-
-    private final ZoneRestorationRecordRepository restorationRepository;
-    private final LoadSheddingEventRepository eventRepository;
+public class ZoneServiceImpl implements ZoneService {
+    
     private final ZoneRepository zoneRepository;
-
-    public ZoneRestorationServiceImpl(
-            ZoneRestorationRecordRepository restorationRepository,
-            LoadSheddingEventRepository eventRepository,
-            ZoneRepository zoneRepository) {
-        this.restorationRepository = restorationRepository;
-        this.eventRepository = eventRepository;
+    
+    public ZoneServiceImpl(ZoneRepository zoneRepository) {
         this.zoneRepository = zoneRepository;
     }
 
     @Override
-    public ZoneRestorationRecord restoreZone(ZoneRestorationRecord record) {
-        if (record.getEvent() == null || record.getEvent().getId() == null) {
-            throw new BadRequestException("Event not specified");
+    public Zone createZone(Zone zone) {
+        if (zone.getPriorityLevel() < 1) {
+            throw new BadRequestException("Priority level must be >= 1");
         }
-
-        LoadSheddingEvent event = eventRepository.findById(record.getEvent().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Event not found"));
-        record.setEvent(event);
-
-        if (record.getZone() == null || record.getZone().getId() == null) {
-            record.setZone(event.getZone());
-        } else if (!record.getZone().getId().equals(event.getZone().getId())) {
-            throw new BadRequestException("Zone mismatch with event");
-        } else {
-            Zone zone = zoneRepository.findById(record.getZone().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
-            record.setZone(zone);
+        
+        if (zoneRepository.findByZoneName(zone.getZoneName()).isPresent()) {
+            throw new BadRequestException("Zone name must be unique");
         }
-
-        if (!record.getRestoredAt().isAfter(event.getEventStart())) {
-            throw new BadRequestException("Restoration must be after event start");
+        
+        if (zone.getActive() == null) {
+            zone.setActive(true);
         }
-
-        return restorationRepository.save(record);
+        
+        return zoneRepository.save(zone);
     }
 
     @Override
-    public ZoneRestorationRecord getRecordById(Long id) {
-        return restorationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Record not found"));
+    public Zone updateZone(Long id, Zone zone) {
+        Zone existingZone = zoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+        
+        existingZone.setZoneName(zone.getZoneName());
+        existingZone.setPriorityLevel(zone.getPriorityLevel());
+        existingZone.setPopulation(zone.getPopulation());
+        existingZone.setUpdatedAt(Instant.now());
+        
+        return zoneRepository.save(existingZone);
     }
 
     @Override
-    public List<ZoneRestorationRecord> getRecordsByZoneId(Long zoneId) { // renamed method
-        if (!zoneRepository.existsById(zoneId)) {
-            throw new ResourceNotFoundException("Zone not found");
-        }
-        return restorationRepository.findByZoneIdOrderByRestoredAtDesc(zoneId);
+    public Zone getZoneById(Long id) {
+        return zoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+    }
+
+    @Override
+    public List<Zone> getAllZones() {
+        return zoneRepository.findAll();
+    }
+
+    @Override
+    public void deactivateZone(Long id) {
+        Zone zone = zoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+        
+        zone.setActive(false);
+        zoneRepository.save(zone);
     }
 }
